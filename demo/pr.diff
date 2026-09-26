@@ -1,0 +1,73 @@
+diff --git a/sample-project/app/routes.py b/sample-project/app/routes.py
+index 50bf394..56c55e6 100644
+--- a/sample-project/app/routes.py
++++ b/sample-project/app/routes.py
+@@ -1,9 +1,16 @@
++import os
++
+ from flask import Blueprint, jsonify, request
+ 
+ from . import db
+ 
+ bp = Blueprint("tasks", __name__)
+ 
++# BREAKING CHANGE (planted #3 - undocumented env var): callers can now cap
++# the list endpoint via TASKS_MAX_LIMIT, but this isn't in .env.example or
++# README.md, so no one deploying this will know it exists.
++_MAX_LIMIT = int(os.environ.get("TASKS_MAX_LIMIT", "0")) or None
++
+ 
+ @bp.get("/health")
+ def health():
+@@ -13,10 +20,29 @@ def health():
+ @bp.get("/tasks")
+ def list_tasks():
+     """Returns all tasks. See README for the response contract."""
+-    tasks = db.list_tasks()
++    tasks = db.list_tasks(limit=_MAX_LIMIT)
+     return jsonify([_serialize(t) for t in tasks])
+ 
+ 
++@bp.post("/tasks/bulk_update")
++def bulk_update_tasks():
++    """
++    Update several tasks in one call.
++
++    PLANTED ISSUE #2 (untested code path): this endpoint has no test
++    coverage at all.
++    Body: {"updates": [{"id": 1, "completed": true}, ...]}
++    """
++    payload = request.get_json(force=True)
++    updates = payload.get("updates", [])
++    results = []
++    for u in updates:
++        task = db.update_task(u["id"], completed=bool(u.get("completed", False)))
++        if task is not None:
++            results.append(_serialize(task))
++    return jsonify(results)
++
++
+ @bp.post("/tasks")
+ def create_task():
+     payload = request.get_json(force=True)
+@@ -41,8 +67,11 @@ def update_task(task_id):
+     fields = {}
+     if "title" in payload:
+         fields["title"] = payload["title"]
+-    if "completed" in payload:
+-        fields["completed"] = bool(payload["completed"])
++    # PLANTED ISSUE #1 (breaking API change): clients used to send
++    # "completed"; the field was silently renamed to "is_done" here without
++    # a version bump, deprecation notice, or CHANGELOG entry.
++    if "is_done" in payload:
++        fields["completed"] = bool(payload["is_done"])
+     task = db.update_task(task_id, **fields)
+     if task is None:
+         return jsonify({"error": "not found"}), 404
+@@ -59,4 +88,5 @@ def delete_task(task_id):
+ 
+ def _serialize(task):
+     """The public response contract for a task. Documented in README.md."""
+-    return {"id": task["id"], "title": task["title"], "completed": task["completed"]}
++    # NOTE: "completed" -> "is_done" rename (see PLANTED ISSUE #1 above).
++    return {"id": task["id"], "title": task["title"], "is_done": task["completed"]}
