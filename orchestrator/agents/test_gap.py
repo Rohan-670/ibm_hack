@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Rule-based reference implementation of the `test-gap-agent`.
 Swap for orchestrator/bob_backend.py + bob-agents/test-gap-agent.md during
@@ -11,11 +12,21 @@ from .. import diffparse, gitutil
 
 ROUTE_LINE = re.compile(r'@(?:bp|app)\.(route|get|post|put|delete|patch)\(["\']([^"\']+)["\']')
 DEF_LINE = re.compile(r"^\s*def (\w+)\(")
+=======
+import os
+import re
+import json
+from .. import diffparse, gitutil
+
+ROUTE_LINE = re.compile(r'@(?:bp|app)\.(route|get|post|put|delete|patch)\(["\']([^"\']+)["\']')
+DEF_LINE   = re.compile(r"^\s*def (\w+)\(")
+>>>>>>> 659f56f (ALL final)
 
 
 def run(repo_root, base_branch, feature_branch, sample_project_path="sample-project"):
     diff_text = gitutil.diff(repo_root, base_branch, feature_branch, sample_project_path)
     files = diffparse.parse(diff_text)
+<<<<<<< HEAD
 
     tests_dir = os.path.join(repo_root, sample_project_path, "tests")
     test_source = _read_all(tests_dir)
@@ -23,12 +34,19 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
     findings = []
     stubs_written = []
 
+=======
+    tests_dir  = os.path.join(repo_root, sample_project_path, "tests")
+    test_source = _read_all(tests_dir)
+    findings = []
+    stubs_written = []
+>>>>>>> 659f56f (ALL final)
     for f in files:
         added = diffparse.added_lines(f)
         new_routes = _find_new_routes(added)
         for path, method, lineno in new_routes:
             if path not in test_source:
                 findings.append({
+<<<<<<< HEAD
                     "file": f["file"],
                     "line": lineno,
                     "severity": "blocker",
@@ -39,11 +57,20 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
                 stub_path = _write_stub(repo_root, path, method)
                 stubs_written.append(stub_path)
 
+=======
+                    "file": f["file"], "line": lineno,
+                    "severity": "blocker", "category": "test_gap",
+                    "description": f"New endpoint {method.upper()} {path} has zero test coverage.",
+                    "suggested_fix": f"See suggested-tests/test_{_slug(path)}.py for a starter stub.",
+                })
+                stubs_written.append(_write_stub(repo_root, path, method))
+>>>>>>> 659f56f (ALL final)
     return findings, stubs_written
 
 
 def _find_new_routes(added_lines):
     results = []
+<<<<<<< HEAD
     pending_lineno = None
     for lineno, text in added_lines:
         m = ROUTE_LINE.search(text)
@@ -51,6 +78,13 @@ def _find_new_routes(added_lines):
             pending_lineno = lineno
             method, path = m.group(1), m.group(2)
             results.append((path, method, pending_lineno))
+=======
+    for lineno, text in added_lines:
+        m = ROUTE_LINE.search(text)
+        if m:
+            method, path = m.group(1), m.group(2)
+            results.append((path, method, lineno))
+>>>>>>> 659f56f (ALL final)
     return results
 
 
@@ -60,7 +94,11 @@ def _read_all(directory):
         return combined
     for name in os.listdir(directory):
         if name.endswith(".py"):
+<<<<<<< HEAD
             with open(os.path.join(directory, name)) as fh:
+=======
+            with open(os.path.join(directory, name), encoding="utf-8") as fh:
+>>>>>>> 659f56f (ALL final)
                 combined += fh.read()
     return combined
 
@@ -86,7 +124,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "sample-project
 from app import create_app, db  # noqa: E402
 
 
+<<<<<<< HEAD
 class {_slug(path).title().replace('_', '')}Test(unittest.TestCase):
+=======
+class {_slug(path).title().replace("_", "")}Test(unittest.TestCase):
+>>>>>>> 659f56f (ALL final)
     def setUp(self):
         db.reset()
         self.client = create_app().test_client()
@@ -94,13 +136,21 @@ class {_slug(path).title().replace('_', '')}Test(unittest.TestCase):
     def test_{_slug(path)}_happy_path(self):
         # TODO(human): fill in a real request body for this endpoint.
         resp = self.client.{method}("{path}", json={{}})
+<<<<<<< HEAD
         self.assertIn(resp.status_code, (200, 201))  # TODO(human): confirm exact code
+=======
+        self.assertIn(resp.status_code, (200, 201))  # TODO: confirm exact code
+>>>>>>> 659f56f (ALL final)
 
 
 if __name__ == "__main__":
     unittest.main()
 '''
+<<<<<<< HEAD
     with open(out_path, "w") as fh:
+=======
+    with open(out_path, "w", encoding="utf-8") as fh:
+>>>>>>> 659f56f (ALL final)
         fh.write(content)
     return out_path
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Rule-based reference implementation of the `diff-analyst` agent.
 
@@ -11,6 +12,10 @@ one produced the findings.
 import re
 import json
 
+=======
+import re
+import json
+>>>>>>> 659f56f (ALL final)
 from .. import diffparse, gitutil
 
 ROUTE_DECORATOR = re.compile(r"@(bp|app)\.(route|get|post|put|delete|patch)\b")
@@ -21,6 +26,7 @@ DICT_KEY = re.compile(r'"(\w+)"\s*:')
 def run(repo_root, base_branch, feature_branch, sample_project_path="sample-project"):
     diff_text = gitutil.diff(repo_root, base_branch, feature_branch, sample_project_path)
     files = diffparse.parse(diff_text)
+<<<<<<< HEAD
 
     findings = []
     for f in files:
@@ -33,6 +39,17 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
         findings.extend(_detect_new_routes(file_path, added, risk))
         findings.extend(_detect_new_env_vars(file_path, added, risk))
 
+=======
+    findings = []
+    for f in files:
+        file_path = f["file"]
+        added   = diffparse.added_lines(f)
+        removed = diffparse.removed_lines(f)
+        risk = gitutil.churn(repo_root, file_path)
+        findings.extend(_detect_field_renames(file_path, f, risk))
+        findings.extend(_detect_new_routes(file_path, added, risk))
+        findings.extend(_detect_new_env_vars(file_path, added, risk))
+>>>>>>> 659f56f (ALL final)
     return findings
 
 
@@ -40,17 +57,28 @@ def _detect_field_renames(file_path, parsed_file, risk):
     findings = []
     for hunk in parsed_file["hunks"]:
         removed_keys = {k for _, text in hunk["removed"] for k in DICT_KEY.findall(text)}
+<<<<<<< HEAD
         added_keys = {k for _, text in hunk["added"] for k in DICT_KEY.findall(text)}
         only_removed = removed_keys - added_keys
         only_added = added_keys - removed_keys
+=======
+        added_keys   = {k for _, text in hunk["added"]   for k in DICT_KEY.findall(text)}
+        only_removed = removed_keys - added_keys
+        only_added   = added_keys   - removed_keys
+>>>>>>> 659f56f (ALL final)
         if only_removed and only_added:
             for old_key in only_removed:
                 for new_key in only_added:
                     findings.append({
+<<<<<<< HEAD
                         "file": file_path,
                         "line": hunk["new_start"],
                         "severity": "blocker",
                         "category": "breaking_change",
+=======
+                        "file": file_path, "line": hunk["new_start"],
+                        "severity": "blocker", "category": "breaking_change",
+>>>>>>> 659f56f (ALL final)
                         "description": (
                             f"Response/dict key '{old_key}' appears to have been renamed to "
                             f"'{new_key}' with no version bump or deprecation notice "
@@ -70,10 +98,15 @@ def _detect_new_routes(file_path, added, risk):
     for lineno, text in added:
         if ROUTE_DECORATOR.search(text):
             findings.append({
+<<<<<<< HEAD
                 "file": file_path,
                 "line": lineno,
                 "severity": "info",
                 "category": "breaking_change",
+=======
+                "file": file_path, "line": lineno,
+                "severity": "info", "category": "breaking_change",
+>>>>>>> 659f56f (ALL final)
                 "description": (
                     f"New route added: `{text.strip()}` (churn score: {risk}). Not breaking "
                     f"by itself, but new surface area — confirm test-gap-agent covers it."
@@ -88,10 +121,15 @@ def _detect_new_env_vars(file_path, added, risk):
     for lineno, text in added:
         if ENV_READ.search(text):
             findings.append({
+<<<<<<< HEAD
                 "file": file_path,
                 "line": lineno,
                 "severity": "warning",
                 "category": "breaking_change",
+=======
+                "file": file_path, "line": lineno,
+                "severity": "warning", "category": "breaking_change",
+>>>>>>> 659f56f (ALL final)
                 "description": (
                     f"New environment variable read introduced: `{text.strip()}`. Confirm it's "
                     f"documented in .env.example and README.md (compliance-agent should verify)."

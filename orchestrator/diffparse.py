@@ -9,11 +9,14 @@ HUNK_HEADER = re.compile(r"^@@ -(\d+),?\d* \+(\d+),?\d* @@")
 
 
 def parse(diff_text):
+<<<<<<< HEAD
     """
     Returns a list of dicts:
     {"file": str, "hunks": [{"new_start": int, "added": [(lineno, text)],
                               "removed": [(lineno, text)]}]}
     """
+=======
+>>>>>>> 659f56f (ALL final)
     files = []
     current_file = None
     current_hunk = None

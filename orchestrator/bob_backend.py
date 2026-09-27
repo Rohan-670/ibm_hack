@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Real Bob Shell backend — use this during the hackathon in place of the
 rule-based agents in orchestrator/agents/*.py once you have live Bob access.
@@ -16,11 +17,14 @@ Adjust the exact Bob Shell CLI invocation below to match whatever your
 installed Bob Shell version expects (check `bob shell --help`); the shape
 here follows the non-interactive usage pattern from the hackathon guide.
 """
+=======
+>>>>>>> 659f56f (ALL final)
 import json
 import subprocess
 
 
 def run_bob_agent(mode_file, prompt, repo_root):
+<<<<<<< HEAD
     """
     mode_file: path to a bob-agents/*.md role definition
     prompt: the specific task instruction, e.g. "Analyze the diff between
@@ -28,14 +32,21 @@ def run_bob_agent(mode_file, prompt, repo_root):
     repo_root: working directory for Bob Shell to operate in
     """
     with open(mode_file) as fh:
+=======
+    with open(mode_file, encoding="utf-8") as fh:
+>>>>>>> 659f56f (ALL final)
         role_definition = fh.read()
 
     full_prompt = f"{role_definition}\n\n---\n\nTASK:\n{prompt}"
 
     result = subprocess.run(
         ["bob", "shell", "-p", full_prompt, "--cwd", repo_root, "--output", "json"],
+<<<<<<< HEAD
         capture_output=True,
         text=True,
+=======
+        capture_output=True, text=True,
+>>>>>>> 659f56f (ALL final)
     )
 
     if result.returncode != 0:
@@ -44,9 +55,12 @@ def run_bob_agent(mode_file, prompt, repo_root):
     try:
         return json.loads(result.stdout)
     except json.JSONDecodeError:
+<<<<<<< HEAD
         # Bob sometimes wraps JSON in prose despite instructions — this is
         # exactly the kind of context-hygiene issue the cost-control notes
         # warn about. Log the raw output for debugging rather than silently
         # dropping findings.
+=======
+>>>>>>> 659f56f (ALL final)
         print("WARNING: could not parse Bob output as JSON:\n", result.stdout)
         return []

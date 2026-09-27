@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Rule-based reference implementation of `compliance-agent`.
 Swap for orchestrator/bob_backend.py + bob-agents/compliance-agent.md
@@ -10,11 +11,20 @@ import json
 from .. import diffparse, gitutil
 
 ENV_READ = re.compile(r"os\.(?:environ(?:\.get)?|getenv)\(['\"](\w+)['\"]")
+=======
+import os
+import re
+import json
+from .. import diffparse, gitutil
+
+ENV_READ       = re.compile(r"os\.(?:environ(?:\.get)?|getenv)\(['\"](\w+)['\"]")
+>>>>>>> 659f56f (ALL final)
 SECRET_LITERAL = re.compile(r"(?i)(api_key|password|secret|token)\s*=\s*['\"][^'\"]+['\"]")
 CHECKLIST_ITEM = re.compile(r"^\s*-\s*\[ \]\s*(.+)$")
 
 
 def run(repo_root, base_branch, feature_branch, sample_project_path="sample-project"):
+<<<<<<< HEAD
     checklist_items = _parse_checklist(os.path.join(repo_root, "checklist.md"))
 
     src_dir = os.path.join(repo_root, sample_project_path)
@@ -31,10 +41,25 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
     env_vars_in_code = set(ENV_READ.findall(all_source))
     env_vars_documented = set(re.findall(r"^(\w+)\s*=", env_example, re.MULTILINE))
     undocumented_env_vars = env_vars_in_code - env_vars_documented
+=======
+    src_dir     = os.path.join(repo_root, sample_project_path)
+    all_source  = _read_all_py(os.path.join(src_dir, "app"))
+    readme      = _read(os.path.join(src_dir, "README.md"))
+    env_example = _read(os.path.join(src_dir, ".env.example"))
+
+    diff_text     = gitutil.diff(repo_root, base_branch, feature_branch, sample_project_path)
+    changed_files = {f["file"] for f in diffparse.parse(diff_text)}
+    changelog_diff_added = any(p.endswith("CHANGELOG.md") for p in changed_files)
+
+    env_vars_in_code    = set(ENV_READ.findall(all_source))
+    env_vars_documented = set(re.findall(r"^(\w+)\s*=", env_example, re.MULTILINE))
+    undocumented        = env_vars_in_code - env_vars_documented
+>>>>>>> 659f56f (ALL final)
 
     findings = []
     onboarding_relevant = {}
 
+<<<<<<< HEAD
     # --- Onboarding-relevant checks ---
     if undocumented_env_vars:
         for var in undocumented_env_vars:
@@ -45,6 +70,14 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
                 "category": "compliance",
                 "description": f"Checklist item 'environment variables documented' = FAIL. "
                                 f"'{var}' is read from the environment but missing from .env.example.",
+=======
+    if undocumented:
+        for var in undocumented:
+            findings.append({
+                "file": ".env.example", "line": None, "severity": "blocker", "category": "compliance",
+                "description": f"Checklist item 'environment variables documented' = FAIL. "
+                               f"'{var}' is read from the environment but missing from .env.example.",
+>>>>>>> 659f56f (ALL final)
                 "suggested_fix": f"Add {var}=<default or example value> to .env.example with a comment.",
             })
         onboarding_relevant["env_vars_documented"] = "FAIL"
@@ -55,8 +88,12 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
     onboarding_relevant["setup_documented"] = "PASS" if setup_documented else "FAIL"
     if not setup_documented:
         findings.append({
+<<<<<<< HEAD
             "file": "README.md", "line": None, "severity": "warning",
             "category": "compliance",
+=======
+            "file": "README.md", "line": None, "severity": "warning", "category": "compliance",
+>>>>>>> 659f56f (ALL final)
             "description": "Checklist item 'setup steps documented' = FAIL. No install instructions found in README.md.",
             "suggested_fix": "Add a Setup section with install and run steps.",
         })
@@ -65,12 +102,17 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
     onboarding_relevant["test_command_documented"] = "PASS" if test_cmd_documented else "FAIL"
     if not test_cmd_documented:
         findings.append({
+<<<<<<< HEAD
             "file": "README.md", "line": None, "severity": "warning",
             "category": "compliance",
+=======
+            "file": "README.md", "line": None, "severity": "warning", "category": "compliance",
+>>>>>>> 659f56f (ALL final)
             "description": "Checklist item 'test command documented' = FAIL.",
             "suggested_fix": "Add the exact test command to README.md.",
         })
 
+<<<<<<< HEAD
     # --- Release-relevant checks ---
     secret_hits = SECRET_LITERAL.findall(all_source)
     if secret_hits:
@@ -78,12 +120,23 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
             "file": "app/", "line": None, "severity": "blocker",
             "category": "compliance",
             "description": f"Checklist item 'no hardcoded secrets' = FAIL. Found literal(s) matching: {set(secret_hits)}.",
+=======
+    secret_hits = SECRET_LITERAL.findall(all_source)
+    if secret_hits:
+        findings.append({
+            "file": "app/", "line": None, "severity": "blocker", "category": "compliance",
+            "description": f"Checklist item 'no hardcoded secrets' = FAIL. Found literal(s): {set(secret_hits)}.",
+>>>>>>> 659f56f (ALL final)
             "suggested_fix": "Move to environment variables and add to .env.example (without real values).",
         })
     else:
         findings.append({
+<<<<<<< HEAD
             "file": "app/", "line": None, "severity": "info",
             "category": "compliance",
+=======
+            "file": "app/", "line": None, "severity": "info", "category": "compliance",
+>>>>>>> 659f56f (ALL final)
             "description": "Checklist item 'no hardcoded secrets' = PASS. No literal secret patterns found.",
             "suggested_fix": None,
         })
@@ -94,16 +147,27 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
         "category": "compliance",
         "description": (
             "Checklist item 'breaking changes documented with version bump' = "
+<<<<<<< HEAD
             + ("PASS" if changelog_diff_added else "UNCLEAR/FAIL — CHANGELOG.md was not touched by this diff.")
+=======
+            + ("PASS" if changelog_diff_added else "UNCLEAR/FAIL \u2014 CHANGELOG.md was not touched by this diff.")
+>>>>>>> 659f56f (ALL final)
         ),
         "suggested_fix": None if changelog_diff_added else "Add a CHANGELOG entry for this PR.",
     })
 
+<<<<<<< HEAD
     for unverifiable in ["Security review completed", "Rollback plan documented", "Migrations are reversible"]:
         findings.append({
             "file": None, "line": None, "severity": "info",
             "category": "compliance",
             "description": f"Checklist item '{unverifiable}' = UNCLEAR — cannot be verified from repo content alone. Needs human sign-off.",
+=======
+    for item in ["Security review completed", "Rollback plan documented", "Migrations are reversible"]:
+        findings.append({
+            "file": None, "line": None, "severity": "info", "category": "compliance",
+            "description": f"Checklist item '{item}' = UNCLEAR \u2014 cannot be verified from repo content alone. Needs human sign-off.",
+>>>>>>> 659f56f (ALL final)
             "suggested_fix": "Confirm manually before merge.",
         })
 
@@ -111,6 +175,7 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
     return findings
 
 
+<<<<<<< HEAD
 def _parse_checklist(path):
     items = []
     for line in _read(path).splitlines():
@@ -124,6 +189,12 @@ def _read(path):
     if not os.path.isfile(path):
         return ""
     with open(path) as fh:
+=======
+def _read(path):
+    if not os.path.isfile(path):
+        return ""
+    with open(path, encoding="utf-8") as fh:
+>>>>>>> 659f56f (ALL final)
         return fh.read()
 
 
@@ -139,7 +210,11 @@ def _read_all_py(directory):
 
 
 def _write_json(path, data):
+<<<<<<< HEAD
     with open(path, "w") as fh:
+=======
+    with open(path, "w", encoding="utf-8") as fh:
+>>>>>>> 659f56f (ALL final)
         json.dump(data, fh, indent=2)
 
 

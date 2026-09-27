@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RepoPilot &mdash; Onboarding</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>RepoPilot</div>
+  <div class="nav-links">
+    <a class="nav-link" href="/">Dashboard</a>
+    <a class="nav-link" href="/pr">PR Analysis</a>
+    <a class="nav-link" href="/onboarding">Onboarding</a>
+    <a class="nav-link" href="/agents">Agents</a>
+    <a class="nav-link" href="/report/pr">Release Report</a>
+    <a class="nav-link" href="/report/onboard">Onboarding Brief</a>
+  </div>
+</nav>
+<div class="page">
+  <div class="page-header">
+    <div class="page-title">Onboarding Brief Generator</div>
+    <div class="page-subtitle">One-click onboarding guide &mdash; architecture, glossary, checklist, safest tasks, quiz</div>
+  </div>
+  <div class="card">
+    <div class="card-title">onboarding-agent &mdash; What It Does</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;">
+      <div class="agent-task-item"><div class="agent-task-num">1</div><div><div class="agent-task-title">Architecture map</div><div class="agent-task-desc">Extracts project summary from AGENTS.md and generates a Mermaid dependency diagram.</div></div></div>
+      <div class="agent-task-item"><div class="agent-task-num">2</div><div><div class="agent-task-title">Where things live</div><div class="agent-task-desc">Builds a quick-reference table (what to touch &rarr; which file) from the AGENTS.md structure section.</div></div></div>
+      <div class="agent-task-item"><div class="agent-task-num">3</div><div><div class="agent-task-title">Domain glossary</div><div class="agent-task-desc">Defines key project terms: Task, TASKS_MAX_LIMIT, Response contract.</div></div></div>
+      <div class="agent-task-item"><div class="agent-task-num">4</div><div><div class="agent-task-title">Day-0 setup checklist</div><div class="agent-task-desc">Reuses setup-checklist.json written by compliance-agent &mdash; zero redundant computation.</div></div></div>
+      <div class="agent-task-item"><div class="agent-task-num">5</div><div><div class="agent-task-title">Safest first tasks</div><div class="agent-task-desc">Walks source tree (skipping venv), ranks files by git churn. Lowest churn = safest to start on.</div></div></div>
+      <div class="agent-task-item"><div class="agent-task-num">6</div><div><div class="agent-task-title">Self-check quiz</div><div class="agent-task-desc">5 questions verifying the contributor absorbed architecture, conventions, and key patterns.</div></div></div>
+    </div>
+  </div>
+  <div class="card" style="background:rgba(124,92,216,.07);border-color:rgba(124,92,216,.3);">
+    <div style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;"><strong style="color:var(--text);">Tip:</strong> Run <a href="/pr">PR Analysis</a> first &mdash; the onboarding agent reuses compliance-agent's setup-checklist.json (no redundant work).</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-secondary" id="run-btn">&#9654; Run Onboarding</button>
+      <a href="/report/onboard" class="btn btn-outline">View Last Brief</a>
+      <a href="/agents" class="btn btn-outline">View Agent Details</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="terminal-label"><span class="dot" id="stream-dot"></span>onboarding-agent &mdash; Live Output</div>
+    <div class="terminal" id="terminal">Waiting for run&#8230;</div>
+  </div>
+  <div id="result-area" style="display:none;">
+    <div style="display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap;">
+      <a href="/report/onboard" class="btn btn-secondary">View Full Brief</a>
+      <span style="color:var(--muted);font-size:0.85rem;">Saved to onboarding-brief.md</span>
+    </div>
+    <div id="onboard-preview"></div>
+  </div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>

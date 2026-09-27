@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RepoPilot &mdash; Agents</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>RepoPilot</div>
+  <div class="nav-links">
+    <a class="nav-link" href="/">Dashboard</a>
+    <a class="nav-link" href="/pr">PR Analysis</a>
+    <a class="nav-link" href="/onboarding">Onboarding</a>
+    <a class="nav-link" href="/agents">Agents</a>
+    <a class="nav-link" href="/report/pr">Release Report</a>
+    <a class="nav-link" href="/report/onboard">Onboarding Brief</a>
+  </div>
+</nav>
+<div class="page">
+  <div class="page-header">
+    <div class="page-title">Agents</div>
+    <div class="page-subtitle">All 5 RepoPilot agents &mdash; their tasks, last findings, and execution times</div>
+  </div>
+  <div class="card-grid" id="summary-bar">
+    <div class="stat"><div class="stat-value" id="stat-total-agents" style="color:var(--green)">5</div><div class="stat-label">Total Agents</div></div>
+    <div class="stat"><div class="stat-value" id="stat-pr-agents" style="color:var(--accent)">4</div><div class="stat-label">PR Mode Agents</div></div>
+    <div class="stat"><div class="stat-value" id="stat-total-findings">&mdash;</div><div class="stat-label">Total Findings (last run)</div></div>
+    <div class="stat"><div class="stat-value" id="stat-score">&mdash;</div><div class="stat-label">Readiness Score</div></div>
+  </div>
+  <div id="agents-container"></div>
+  <div id="no-report-notice" class="card" style="display:none;border-color:rgba(245,166,35,.3);background:rgba(245,166,35,.06);">
+    <div style="font-size:0.9rem;"><strong style="color:var(--yellow);">No report yet.</strong> Run <a href="/pr">PR Analysis</a> to populate per-agent findings, timing, and finding counts.</div>
+  </div>
+</div>
+<script>window.__AGENT_DATA__ = {{agent_data_json}};</script>
+<script src="/static/app.js"></script>
+</body>
+</html>

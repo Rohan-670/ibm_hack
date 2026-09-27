@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RepoPilot &mdash; Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>RepoPilot</div>
+  <div class="nav-links">
+    <a class="nav-link" href="/">Dashboard</a>
+    <a class="nav-link" href="/pr">PR Analysis</a>
+    <a class="nav-link" href="/onboarding">Onboarding</a>
+    <a class="nav-link" href="/agents">Agents</a>
+    <a class="nav-link" href="/report/pr">Release Report</a>
+    <a class="nav-link" href="/report/onboard">Onboarding Brief</a>
+  </div>
+</nav>
+<div class="page">
+  <div class="page-header">
+    <div class="page-title">Dashboard</div>
+    <div class="page-subtitle">Repo intelligence overview &mdash; shared state across all agents</div>
+  </div>
+  <div class="card-grid">
+    <div class="stat"><div class="stat-value {{score_class}}">{{score}}</div><div class="stat-label">Last Readiness Score / 100</div></div>
+    <div class="stat"><div class="stat-value" style="color:var(--green)">5</div><div class="stat-label">Agents Available</div></div>
+    <div class="stat"><div class="stat-value" style="color:var(--accent2)">2</div><div class="stat-label">Modes (PR + Onboarding)</div></div>
+    <div class="stat"><div class="stat-value" style="color:var(--yellow)">0</div><div class="stat-label">Dependencies Required</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Readiness Score</div>
+      <div class="score-ring-wrap">
+        <div class="score-ring" data-score="{{score}}" style="--pct:{{score}}"><span class="score-ring-val">{{score}}/100</span></div>
+        <div>
+          <div style="font-size:0.9rem;margin-bottom:8px;">Score from last PR analysis run.<br><span style="color:var(--muted);font-size:0.8rem;">0 = 4 blockers detected. Run <strong>PR Analysis</strong> to refresh.</span></div>
+          <a href="/pr" class="btn btn-primary btn-sm">Run PR Analysis</a>&nbsp;
+          <a href="/onboarding" class="btn btn-outline btn-sm">Run Onboarding</a>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Git Branches</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">{{branch_pills}}</div>
+      <div class="card-title" style="margin-top:8px;">Recent Commits</div>
+      <div id="git-log" data-log="{{log}}"></div>
+    </div>
+  </div>
+  <div class="card-grid" style="margin-top:4px;">
+    <div class="action-card"><div class="action-card-title">PR Analysis</div><div class="action-card-desc">Run 4 agents in parallel. Detects breaking changes, test gaps, doc drift, compliance issues.</div><a href="/pr" class="btn btn-primary btn-sm" style="align-self:flex-start">Open</a></div>
+    <div class="action-card"><div class="action-card-title">Onboarding Brief</div><div class="action-card-desc">Generate an onboarding guide: architecture, glossary, Day-0 checklist, safest first tasks, quiz.</div><a href="/onboarding" class="btn btn-secondary btn-sm" style="align-self:flex-start">Open</a></div>
+    <div class="action-card"><div class="action-card-title">Agents</div><div class="action-card-desc">View all 5 agents, their tasks, last finding counts, and direct run buttons.</div><a href="/agents" class="btn btn-outline btn-sm" style="align-self:flex-start">View</a></div>
+    <div class="action-card"><div class="action-card-title">Release Report</div><div class="action-card-desc">View the full rendered Release Readiness Report with all findings and suggested fixes.</div><a href="/report/pr" class="btn btn-outline btn-sm" style="align-self:flex-start">View</a></div>
+  </div>
+  <div class="card" style="margin-top:4px;">
+    <div class="card-title">The 4 Planted Bugs (demo ground truth)</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="finding blocker"><span class="badge blocker">Blocker</span><strong style="margin-left:8px;">Breaking field rename</strong><div class="finding-loc">sample-project/app/routes.py &mdash; <code>completed</code> renamed to <code>is_done</code> with no version bump</div><div class="finding-fix">Fix: keep alias or bump API version + update CHANGELOG.md</div></div>
+      <div class="finding blocker"><span class="badge blocker">Blocker</span><strong style="margin-left:8px;">Untested endpoint</strong><div class="finding-loc">POST /tasks/bulk_update added with zero test coverage</div><div class="finding-fix">Fix: see suggested-tests/test_tasks_bulk_update.py</div></div>
+      <div class="finding blocker"><span class="badge blocker">Blocker</span><strong style="margin-left:8px;">Undocumented env var</strong><div class="finding-loc"><code>TASKS_MAX_LIMIT</code> read from environment but missing from .env.example</div><div class="finding-fix">Fix: add to .env.example with a comment</div></div>
+      <div class="finding blocker"><span class="badge blocker">Blocker</span><strong style="margin-left:8px;">Missing CHANGELOG entry</strong><div class="finding-loc">PR changes API behavior but CHANGELOG.md was not updated</div><div class="finding-fix">Fix: add entry + version bump</div></div>
+    </div>
+  </div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>

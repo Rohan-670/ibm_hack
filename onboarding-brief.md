@@ -40,9 +40,15 @@ graph TD
 
 ## 5. Safest first tasks (lowest historical churn = lowest risk)
 
+<<<<<<< HEAD
 1. `sample-project/run.py` — churn score 1 (fewer historical changes = safer to learn on)
 2. `sample-project/app/__init__.py` — churn score 1 (fewer historical changes = safer to learn on)
 3. `sample-project/app/db.py` — churn score 1 (fewer historical changes = safer to learn on)
+=======
+1. `sample-project\run.py` — churn score 1 (fewer historical changes = safer to learn on)
+2. `sample-project\app\db.py` — churn score 1 (fewer historical changes = safer to learn on)
+3. `sample-project\app\__init__.py` — churn score 1 (fewer historical changes = safer to learn on)
+>>>>>>> 659f56f (ALL final)
 
 ## 6. Self-check quiz
 

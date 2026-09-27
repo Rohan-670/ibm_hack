@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RepoPilot &mdash; PR Analysis</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>RepoPilot</div>
+  <div class="nav-links">
+    <a class="nav-link" href="/">Dashboard</a>
+    <a class="nav-link" href="/pr">PR Analysis</a>
+    <a class="nav-link" href="/onboarding">Onboarding</a>
+    <a class="nav-link" href="/agents">Agents</a>
+    <a class="nav-link" href="/report/pr">Release Report</a>
+    <a class="nav-link" href="/report/onboard">Onboarding Brief</a>
+  </div>
+</nav>
+<div class="page">
+  <div class="page-header">
+    <div class="page-title">PR Analysis</div>
+    <div class="page-subtitle">4 agents run in parallel &mdash; diff-analyst, test-gap-agent, doc-sync-agent, compliance-agent</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Configuration</div>
+    <form id="pr-form">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label" for="base-branch">Base Branch</label><input class="form-input" id="base-branch" type="text" value="master" placeholder="master"></div>
+        <div class="form-group"><label class="form-label" for="feature-branch">Feature Branch</label><input class="form-input" id="feature-branch" type="text" value="feature/bulk-update" placeholder="feature/my-branch"></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;margin-top:4px;">
+        <button class="btn btn-primary" id="run-btn" type="submit">&#9654; Run PR Analysis</button>
+        <a href="/report/pr" class="btn btn-outline">View Last Report</a>
+        <a href="/agents" class="btn btn-outline">View All Agents</a>
+      </div>
+    </form>
+  </div>
+  <div class="card" id="agent-status-card">
+    <div class="card-title">Agent Status</div>
+    <div id="agent-rows">
+      <div class="agent-row" id="row-diff-analyst"><div class="agent-row-dot"><span class="dot" id="dot-diff-analyst"></span></div><div class="agent-row-name"><span class="agent-icon" style="color:var(--accent)">&#128269;</span><strong>diff-analyst</strong><span class="agent-row-tag">breaking changes</span></div><div class="agent-row-status" id="status-diff-analyst">Waiting</div><div class="agent-row-count" id="count-diff-analyst">&mdash;</div><div class="agent-row-time" id="time-diff-analyst"></div></div>
+      <div class="agent-row" id="row-test-gap-agent"><div class="agent-row-dot"><span class="dot" id="dot-test-gap-agent"></span></div><div class="agent-row-name"><span class="agent-icon" style="color:var(--red)">&#9879;</span><strong>test-gap-agent</strong><span class="agent-row-tag">test coverage</span></div><div class="agent-row-status" id="status-test-gap-agent">Waiting</div><div class="agent-row-count" id="count-test-gap-agent">&mdash;</div><div class="agent-row-time" id="time-test-gap-agent"></div></div>
+      <div class="agent-row" id="row-doc-sync-agent"><div class="agent-row-dot"><span class="dot" id="dot-doc-sync-agent"></span></div><div class="agent-row-name"><span class="agent-icon" style="color:var(--yellow)">&#128196;</span><strong>doc-sync-agent</strong><span class="agent-row-tag">doc drift</span></div><div class="agent-row-status" id="status-doc-sync-agent">Waiting</div><div class="agent-row-count" id="count-doc-sync-agent">&mdash;</div><div class="agent-row-time" id="time-doc-sync-agent"></div></div>
+      <div class="agent-row" id="row-compliance-agent"><div class="agent-row-dot"><span class="dot" id="dot-compliance-agent"></span></div><div class="agent-row-name"><span class="agent-icon" style="color:var(--green)">&#128737;</span><strong>compliance-agent</strong><span class="agent-row-tag">checklist</span></div><div class="agent-row-status" id="status-compliance-agent">Waiting</div><div class="agent-row-count" id="count-compliance-agent">&mdash;</div><div class="agent-row-time" id="time-compliance-agent"></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="terminal-label"><span class="dot" id="stream-dot"></span>Live Output</div>
+    <div class="terminal" id="terminal">Waiting for run&#8230;</div>
+  </div>
+  <div id="result-area" style="display:none;">
+    <div class="card" id="score-result-card">
+      <div class="card-title">Readiness Score</div>
+      <div class="score-ring-wrap">
+        <div class="score-ring" id="result-score-ring" style="--pct:0"><span class="score-ring-val" id="result-score-val">0/100</span></div>
+        <div><div id="result-score-desc" style="font-size:0.9rem;margin-bottom:12px;"></div><div style="display:flex;gap:10px;"><a href="/report/pr" class="btn btn-primary btn-sm">View Full Report</a><a href="/agents" class="btn btn-outline btn-sm">View Agent Details</a></div></div>
+      </div>
+    </div>
+    <div id="per-agent-findings"></div>
+  </div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>

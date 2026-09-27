@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Rule-based reference implementation of `doc-sync-agent`.
 Swap for orchestrator/bob_backend.py + bob-agents/doc-sync-agent.md during
@@ -11,11 +12,21 @@ from .. import diffparse, gitutil
 
 ROUTE_LINE = re.compile(r'@(?:bp|app)\.(route|get|post|put|delete|patch)\(["\']([^"\']+)["\']')
 DICT_KEY = re.compile(r'"(\w+)"\s*:')
+=======
+import os
+import re
+import json
+from .. import diffparse, gitutil
+
+ROUTE_LINE = re.compile(r'@(?:bp|app)\.(route|get|post|put|delete|patch)\(["\']([^"\']+)["\']')
+DICT_KEY   = re.compile(r'"(\w+)"\s*:')
+>>>>>>> 659f56f (ALL final)
 
 
 def run(repo_root, base_branch, feature_branch, sample_project_path="sample-project"):
     diff_text = gitutil.diff(repo_root, base_branch, feature_branch, sample_project_path)
     files = diffparse.parse(diff_text)
+<<<<<<< HEAD
 
     readme_path = os.path.join(repo_root, sample_project_path, "README.md")
     readme = _read(readme_path)
@@ -26,19 +37,33 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
     findings = []
 
     # 1. New/changed routes not mentioned in README
+=======
+    readme_path = os.path.join(repo_root, sample_project_path, "README.md")
+    readme = _read(readme_path)
+    changed_paths = {f["file"] for f in files}
+    changelog_touched = any(p.endswith("CHANGELOG.md") for p in changed_paths)
+    findings = []
+
+>>>>>>> 659f56f (ALL final)
     for f in files:
         for lineno, text in diffparse.added_lines(f):
             m = ROUTE_LINE.search(text)
             if m and m.group(2) not in readme:
                 findings.append({
+<<<<<<< HEAD
                     "file": "README.md",
                     "line": None,
                     "severity": "warning",
                     "category": "doc_drift",
+=======
+                    "file": "README.md", "line": None,
+                    "severity": "warning", "category": "doc_drift",
+>>>>>>> 659f56f (ALL final)
                     "description": f"Endpoint {m.group(1).upper()} {m.group(2)} is not documented in README.md's endpoint table.",
                     "suggested_fix": "Add a row to the endpoint table describing method, path, and body.",
                 })
 
+<<<<<<< HEAD
     # 2. Field renames not reflected in README's example payload
     for f in files:
         for hunk in f["hunks"]:
@@ -51,10 +76,22 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
                     "line": None,
                     "severity": "warning",
                     "category": "doc_drift",
+=======
+    for f in files:
+        for hunk in f["hunks"]:
+            removed_keys = {k for _, t in hunk["removed"] for k in DICT_KEY.findall(t)}
+            added_keys   = {k for _, t in hunk["added"]   for k in DICT_KEY.findall(t)}
+            stale_in_readme = (removed_keys - added_keys) & set(DICT_KEY.findall(readme))
+            for key in stale_in_readme:
+                findings.append({
+                    "file": "README.md", "line": None,
+                    "severity": "warning", "category": "doc_drift",
+>>>>>>> 659f56f (ALL final)
                     "description": f"README's response contract example still shows '{key}', which this PR removed/renamed in code.",
                     "suggested_fix": "Update the JSON example in README.md's 'Response contract' section.",
                 })
 
+<<<<<<< HEAD
     # 3. No CHANGELOG entry despite behavior changes
     if files and not changelog_touched:
         findings.append({
@@ -62,6 +99,12 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
             "line": None,
             "severity": "blocker",
             "category": "doc_drift",
+=======
+    if files and not changelog_touched:
+        findings.append({
+            "file": "CHANGELOG.md", "line": None,
+            "severity": "blocker", "category": "doc_drift",
+>>>>>>> 659f56f (ALL final)
             "description": "This PR changes API behavior but CHANGELOG.md was not updated.",
             "suggested_fix": "Add an entry describing the breaking change and bump the version.",
         })
@@ -72,7 +115,11 @@ def run(repo_root, base_branch, feature_branch, sample_project_path="sample-proj
 def _read(path):
     if not os.path.isfile(path):
         return ""
+<<<<<<< HEAD
     with open(path) as fh:
+=======
+    with open(path, encoding="utf-8") as fh:
+>>>>>>> 659f56f (ALL final)
         return fh.read()
 
 

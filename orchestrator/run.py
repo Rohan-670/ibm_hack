@@ -4,6 +4,7 @@ RepoPilot orchestrator.
 Usage:
     python -m orchestrator.run --mode=pr --base=master --branch=feature/bulk-update
     python -m orchestrator.run --mode=onboard
+<<<<<<< HEAD
 
 This runs the rule-based reference agents in orchestrator/agents/*.py by
 default. To run against real Bob Shell instead, see bob_backend.py — swap
@@ -11,6 +12,8 @@ the calls in _run_pr_mode() below from e.g. `diff_analyst.run(...)` to
 `bob_backend.run_bob_agent("bob-agents/diff-analyst.md", ..., repo_root)`.
 Everything downstream (report_builder, scoring, this file's timing/parallel
 logic) is agnostic to which backend produced the findings.
+=======
+>>>>>>> 659f56f (ALL final)
 """
 import argparse
 import time
@@ -36,9 +39,15 @@ def run_pr_mode(repo_root, base_branch, feature_branch):
     timings = {}
 
     tasks = {
+<<<<<<< HEAD
         "diff-analyst": lambda: diff_analyst.run(repo_root, base_branch, feature_branch),
         "test-gap-agent": lambda: test_gap.run(repo_root, base_branch, feature_branch),
         "doc-sync-agent": lambda: doc_sync.run(repo_root, base_branch, feature_branch),
+=======
+        "diff-analyst":    lambda: diff_analyst.run(repo_root, base_branch, feature_branch),
+        "test-gap-agent":  lambda: test_gap.run(repo_root, base_branch, feature_branch),
+        "doc-sync-agent":  lambda: doc_sync.run(repo_root, base_branch, feature_branch),
+>>>>>>> 659f56f (ALL final)
         "compliance-agent": lambda: compliance.run(repo_root, base_branch, feature_branch),
     }
 
@@ -50,11 +59,19 @@ def run_pr_mode(repo_root, base_branch, feature_branch):
             if name == "test-gap-agent":
                 findings, stubs = result
                 all_findings.extend(findings)
+<<<<<<< HEAD
                 print(f"  [{name}] done in {end - start:.3f}s — {len(findings)} finding(s), "
                       f"{len(stubs)} test stub(s) written")
             else:
                 all_findings.extend(result)
                 print(f"  [{name}] done in {end - start:.3f}s — {len(result)} finding(s)")
+=======
+                print(f"  [{name}] done in {end - start:.3f}s \u2014 {len(findings)} finding(s), "
+                      f"{len(stubs)} test stub(s) written")
+            else:
+                all_findings.extend(result)
+                print(f"  [{name}] done in {end - start:.3f}s \u2014 {len(result)} finding(s)")
+>>>>>>> 659f56f (ALL final)
 
     report_path, score = report_builder.build_release_report(repo_root, all_findings, timings)
     print(f"\nReadiness score: {score}/100")
